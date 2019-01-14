@@ -45,12 +45,18 @@ CFLAGS	= $(DEBUG) $(DEFS) -Wformat=2 -Wall -Wextra -Winline $(INCLUDE) -pipe -fP
 LIBS    = -lm -lpthread -lrt -lcrypt
 
 ifeq ($(PLATFORM),)
+  #PLATFORM = OrangePi_RK3399
   #PLATFORM = OrangePi_2G-IOT
   #PLATFORM = OrangePi_PC2
   #PLATFORM = OrangePi_A64
   PLATFORM = OrangePi_H3
   #PLATFORM = OrangePi_LITE2
   #PLATFORM = OrangePi_ZERO
+endif
+
+ifeq ($(PLATFORM), OrangePi_RK3399)
+EXTRA_CFLAGS = -DCONFIG_ORANGEPI_RK3399
+EXTRA_CFLAGS += -DCONFIG_ORANGEPI
 endif
 
 ifeq ($(PLATFORM), OrangePi_2G-IOT)
@@ -103,6 +109,10 @@ SRC	=	wiringPi.c						\
 		wpiExtensions.c 					\
 		w25q64.c						\
 		oled.c
+
+ifeq ($(PLATFORM), OrangePi_RK3399)
+SRC += OrangePi.c
+endif
 
 ifeq ($(PLATFORM), OrangePi_2G-IOT)
 SRC += OrangePi.c

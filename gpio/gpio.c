@@ -500,6 +500,9 @@ static void doExports (UNU int argc, UNU char *argv [])
 // Try to read the direction
 #ifdef CONFIG_ORANGEPI
 	i = pinToGpioOrangePi[j];
+#ifdef CONFIG_ORANGEPI_RK3399
+	i += 1000;
+#endif
 #endif
 	
     sprintf (fName, "/sys/class/gpio/gpio%d/direction", i) ;
@@ -589,6 +592,9 @@ void doExport (int argc, char *argv [])
   pin = atoi (argv [2]) ;
 #ifdef CONFIG_ORANGEPI
   pin = pinToGpioOrangePi[pin];
+#ifdef CONFIG_ORANGEPI_RK3399
+  pin += 1000;
+#endif
 #endif
 
   mode = argv [3] ;
@@ -780,6 +786,9 @@ void doUnexport (int argc, char *argv [])
   pin = atoi (argv [2]) ;
 #ifdef CONFIG_ORANGEPI
 	pin = pinToGpioOrangePi[pin];
+#ifdef CONFIG_ORANGEPI_RK3399
+	pin += 1000;
+#endif
 #endif
 
   if ((fd = fopen ("/sys/class/gpio/unexport", "w")) == NULL)
@@ -811,6 +820,9 @@ void doUnexportall (char *progName)
   {
 #ifdef CONFIG_ORANGEPI
   	i = pinToGpioOrangePi[pin];
+#ifdef CONFIG_ORANGEPI_RK3399
+	i += 1000;
+#endif
 #endif
     if ((fd = fopen ("/sys/class/gpio/unexport", "w")) == NULL)
     {

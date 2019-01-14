@@ -785,6 +785,10 @@ int piGpioLayout (void)
   while (fgets (line, 120, cpuFd) != NULL)
     if (strncmp (line, "Hardware", 8) == 0)
       break ;
+	
+#ifdef CONFIG_ORANGEPI_RK3399
+ 	strcpy(line, "Hardware		 : Rockchip rk3399 Family");	
+#endif
 
   if (strncmp (line, "Hardware", 8) != 0)
     piGpioLayoutOops ("No \"Hardware\" line") ;
@@ -798,6 +802,10 @@ int piGpioLayout (void)
       break ;
 
   fclose (cpuFd) ;
+	
+#ifdef CONFIG_ORANGEPI_RK3399
+	strcpy(line, "Revision	: 0000");
+#endif
 
   if (strncmp (line, "Revision", 8) != 0)
     piGpioLayoutOops ("No \"Revision\" line") ;
@@ -961,6 +969,9 @@ void piBoardId (int *model, int *rev, int *mem, int *maker, int *warranty)
       break ;
 
   fclose (cpuFd) ;
+#ifdef CONFIG_ORANGEPI_RK3399
+	strcpy(line, "Revision	: 0000");
+#endif
 
   if (strncmp (line, "Revision", 8) != 0)
     piGpioLayoutOops ("No \"Revision\" line") ;
@@ -2388,6 +2399,38 @@ int wiringPiSetup (void)
 		return wiringPiFailure(WPI_ALMOST, 
 				"wiringPiSetup: mmap (GPIO) failed: %s\n", strerror(errno));
 #else
+#ifdef CONFIG_ORANGEPI_RK3399
+		gpio2_base = (uint32_t *)mmap(0, BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, GPIO2_BASE);
+		if ((int32_t)(unsigned long)gpio2_base == -1)
+			return wiringPiFailure(WPI_ALMOST, 
+					"wiringPiSetup: mmap (GPIO2_BASE) failed: %s\n", strerror(errno));
+		cru_base = (uint32_t *)mmap(0, BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, CRU_BASE);
+		if ((int32_t)(unsigned long)cru_base == -1)
+			return wiringPiFailure(WPI_ALMOST, 
+					"wiringPiSetup: mmap (CRU_BASE) failed: %s\n", strerror(errno));
+		pmucru_base = (uint32_t *)mmap(0, BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, PMUCRU_BASE);
+		if ((int32_t)(unsigned long)pmucru_base == -1)
+			return wiringPiFailure(WPI_ALMOST, 
+					"wiringPiSetup: mmap (PMUCRU_BASE) failed: %s\n", strerror(errno));
+		grf_base = (uint32_t *)mmap(0, BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, GRF_BASE);
+		if ((int32_t)(unsigned long)grf_base == -1)
+			return wiringPiFailure(WPI_ALMOST, 
+					"wiringPiSetup: mmap (GRF_BASE) failed: %s\n", strerror(errno));
+		pmugrf_base = (uint32_t *)mmap(0, BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, PMUGRF_BASE);
+		if ((int32_t)(unsigned long)pmugrf_base == -1)
+			return wiringPiFailure(WPI_ALMOST, 
+					"wiringPiSetup: mmap (PMUGRF_BASE) failed: %s\n", strerror(errno));
+		gpio1_base = (uint32_t *)mmap(0, BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, GPIO1_BASE);
+		if ((int32_t)(unsigned long)grf_base == -1)
+			return wiringPiFailure(WPI_ALMOST, 
+					"wiringPiSetup: mmap (GPIO1_BASE) failed: %s\n", strerror(errno));
+		gpio4_base = (uint32_t *)mmap(0, BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, GPIO4_BASE);
+		if ((int32_t)(unsigned long)gpio4_base == -1)
+			return wiringPiFailure(WPI_ALMOST, 
+					"wiringPiSetup: mmap (GPIO4_BASE) failed: %s\n", strerror(errno));
+			
+#else
+
 	/* GPIO */
 #ifdef CONFIG_ORANGEPI_LITE2
     gpio = (uint32_t *)mmap(0, BLOCK_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, GPIO_BASE);
@@ -2412,6 +2455,7 @@ int wiringPiSetup (void)
 		return wiringPiFailure(WPI_ALMOST, 
 				"wiringPiSetup: mmap (GPIO) failed: %s\n", strerror(errno));
 #endif
+#endif /* CONFIG_ORANGEPI_RK3399  */
 #endif
 
 #else
