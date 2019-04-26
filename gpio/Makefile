@@ -40,13 +40,13 @@ LDFLAGS	= -L$(DESTDIR)$(PREFIX)/lib
 LIBS    = -lwiringPi -lwiringPiDev -lpthread -lrt -lm -lcrypt
 
 ifeq ($(PLATFORM),)
-  #PLATFORM = OrangePi_RK3399
+  PLATFORM = OrangePi_RK3399
   #PLATFORM = OrangePi_2G-IOT
   #PLATFORM = OrangePi_PC2
   #PLATFORM = OrangePi_A64
   #PLATFORM = OrangePi_H5
   #PLATFORM = OrangePi_ZERO
-  PLATFORM = OrangePi_H3
+  #PLATFORM = OrangePi_H3
   #PLATFORM = OrangePi_LITE2
 endif
 
